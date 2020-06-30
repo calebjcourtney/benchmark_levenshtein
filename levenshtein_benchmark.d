@@ -256,7 +256,7 @@ if (isForwardRange!(Range1) && isForwardRange!(Range2))
     return levenshteinDistance(s, t, slen + tlen);
 }
 
-
+// original tests from standard library
 unittest
 {
     assert(levenshteinDistance("cat", "rat") == 1);
@@ -265,7 +265,11 @@ unittest
     assert(levenshteinDistance("abcde", "abCde") == 1);
     assert(levenshteinDistance("kitten", "sitting") == 3);
     assert(levenshteinDistance("ID", "I♥D") == 1);
-    assert(levenshteinDistance("cat"d, "rat"d) == 1);
-    assert(levenshteinDistance("Michigan"d, "Minnesota"d, 3) == 3);
-    assert(levenshteinDistance("Fifteen"d, "Fourteen"d, 2) == 2);
+}
+
+
+// testing the benchmarking
+unittest {
+    assert(levenshteinDistance("Michigan", "Minnesota", 3) == 3);  // typically this would return 7
+    assert(levenshteinDistance("Fifteen", "Fourteen", 2) == 2);  // typically this would return 4
 }
