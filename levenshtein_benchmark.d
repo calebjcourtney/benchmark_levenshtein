@@ -3,9 +3,14 @@ module levenshtein.benchmark;
 // full library
 import std.range;
 
-// specific functions
+// specific imports
 import std.conv: to;
 import std.functional: binaryFun;
+import std.algorithm.mutation : reverse;
+import core.checkedint : mulu;
+import core.exception : onOutOfMemoryError;
+import core.stdc.stdlib : realloc;
+import core.stdc.stdlib : free;
 
 enum EditOp : char
 {
@@ -24,8 +29,6 @@ private struct Levenshtein(Range, alias equals, CostType = size_t)
 {
     EditOp[] path()
     {
-        import std.algorithm.mutation : reverse;
-
         EditOp[] result;
         size_t i = rows - 1, j = cols - 1;
         // restore the path
@@ -74,7 +77,6 @@ private:
     ref CostType matrix(size_t row, size_t col) { return _matrix[row * cols + col]; }
 
     void AllocMatrix(size_t r, size_t c) @trusted {
-        import core.checkedint : mulu;
         bool overflow;
         const rc = mulu(r, c, overflow);
         assert(!overflow, "Overflow during multiplication to determine number "
@@ -83,8 +85,6 @@ private:
         cols = c;
         if (_matrix.length < rc)
         {
-            import core.exception : onOutOfMemoryError;
-            import core.stdc.stdlib : realloc;
             const nbytes = mulu(rc, _matrix[0].sizeof, overflow);
             assert(!overflow, "Overflow during multiplication to determine "
                 ~ " number of bytes of matrix");
@@ -97,8 +97,6 @@ private:
     }
 
     void FreeMatrix() @trusted {
-        import core.stdc.stdlib : free;
-
         free(_matrix.ptr);
         _matrix = null;
     }
